@@ -1,10 +1,24 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
+import midi from 'midi';
+import settings from 'electron-settings';
 
 import { Main, Split, Child } from './components/layout';
 import LPButton from './components/LPButton';
 
-import midi from 'midi';
+
+const { Provider } = React.createContext({
+  setKeyColor(key, color) {
+    this.midiOutput.sendMessage(144, key, color);
+  }
+});
+
+const createDefaultConfig = () => {
+  settings.set('devices', {
+    input: 0,
+    output: 1
+  });
+}
 
 class App extends Component {
   constructor(props) {
@@ -16,15 +30,26 @@ class App extends Component {
         buttons[81 - (y * 10) + x] = { color: 0, pressed: false}
       )
     )
+
     this.state = {
       buttons
     }
+
+
+    if (!settings.has('devices')) {
+      createDefaultConfig();
+    } else {
+      this.state.config = {
+        devices: settings.get('devices')
+      }
+    }
+    
   }
 
   componentDidMount() {
     let buttons = {}
     
-
+console.log(this.state)
     this.midiInput = new midi.input();
     this.midiOutput = new midi.output();
 
@@ -43,6 +68,9 @@ class App extends Component {
     });
 
     this.midiInput.openPort(0);
+    this.midiOutput.openPort(1);
+
+    this.clearLaunchpad();
   }
 
   launchpadKeyEvent(key, pressed) {
@@ -59,7 +87,13 @@ class App extends Component {
     console.log(`Main Button: ${key}, pressed: ${pressed}`)
   }
 
+  clearLaunchpad() {
+    console.log(this.midiOutput)
+    _.range(11, 89).map(i => this.midiOutput.sendMessage([144, i, 0]))
+  }
+
   launchpadTopKeyEvent(key, pressed) {
+    this.clearLaunchpad();
     console.log(`Top Button: ${key}, pressed: ${pressed}`)
   }
 
@@ -69,23 +103,25 @@ class App extends Component {
 
   render() {
     return (
-      <Main>
-        <Split direction="column">
-          {_.range(0, 8).map(y => (
-            <Split key={`row-${y}`} justify="center" items="stretch">
-              {_.range(0, 8).map(x => {
-                const buttonIndex = y * 8 + x;
-                const LPIndex = 81 - (y * 10) + x
-                return (
-                  <Child key={`col-${x}`} fill={true} padding="5px">
-                    <LPButton index={buttonIndex} color={this.state.buttons[LPIndex].pressed ? 'red' : 'light'}>{LPIndex}</LPButton>
-                  </Child>
-                )
-              })}
-            </Split>
-          ))}
-        </Split>
-      </Main>
+      <Provider midiOutput={this.midiOutput} midiInput={this.midiInput}>
+        <Main>
+          <Split direction="column">
+            {_.range(0, 8).map(y => (
+              <Split key={`row-${y}`} justify="center" items="stretch">
+                {_.range(0, 8).map(x => {
+                  const buttonIndex = y * 8 + x;
+                  const LPIndex = 81 - (y * 10) + x
+                  return (
+                    <Child key={`col-${x}`} fill={true} padding="5px">
+                      <LPButton index={buttonIndex} color={this.state.buttons[LPIndex].pressed ? 'red' : 'light'}>{LPIndex}</LPButton>
+                    </Child>
+                  )
+                })}
+              </Split>
+            ))}
+          </Split>
+        </Main>
+      </Provider>
     )
   }
 }

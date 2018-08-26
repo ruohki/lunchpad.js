@@ -12,6 +12,7 @@
   "dependencies": {
     "electron": "^2.0.8",
     "electron-rebuild": "^1.8.2",
+    "electron-settings": "^3.2.0",
     "lodash": "^4.17.10",
     "midi": "^0.9.5",
     "polished": "^2.0.2",
