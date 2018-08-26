@@ -106,8 +106,34 @@ console.log(this.state)
       <Provider midiOutput={this.midiOutput} midiInput={this.midiInput}>
         <Main>
           <Split direction="column">
+            <Split justify="center" self="stretch" content="stretch">
+              <Child fill padding="15px">
+                <LPButton color={"light"} round />
+              </Child>
+              <Child fill padding="15px">
+                <LPButton color={"light"} round />
+              </Child>
+              <Child fill padding="15px">
+                <LPButton color={"light"} round />
+              </Child>
+              <Child fill padding="15px">
+                <LPButton color={"light"} round />
+              </Child>
+              <Child fill padding="15px">
+                <LPButton color={"light"} round />
+              </Child>
+              <Child fill padding="15px">
+                <LPButton color={"light"} round />
+              </Child>
+              <Child fill padding="15px">
+                <LPButton color={"light"} round />
+              </Child>
+              <Child fill padding="15px">
+                <LPButton color={"light"} round />
+              </Child>
+            </Split>
             {_.range(0, 8).map(y => (
-              <Split key={`row-${y}`} justify="center" items="stretch">
+              <Split key={`row-${y}`} justify="center" self="stretch" content="stretch">
                 {_.range(0, 8).map(x => {
                   const buttonIndex = y * 8 + x;
                   const LPIndex = 81 - (y * 10) + x

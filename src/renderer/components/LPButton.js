@@ -6,10 +6,10 @@ import buttonMask from '../../static/buttonmask.png';
 const Button = styled.button`
   border: 2px solid rgba(0,0,0,.25);
   outline: none;
-  border-radius: 7px;
+  border-radius: ${({ radius }) => radius || "7px"};
 
-  min-height: 48px;
-  min-width: 48px;
+  min-height: ${({ height }) => height || "48px"};
+  min-width: ${({ width }) => width || "48px"};
 
   width: 100%;
   height: 100%;
@@ -18,8 +18,8 @@ const Button = styled.button`
   background-color: ${({ color }) => color};
   background-image: url(${buttonMask});
 `
-const LPButton = ({ children, color = "light" }) => (
-  <Button color={color}>{children}</Button>
+const LPButton = ({ children, round = false, color = "light" }) => (
+  <Button color={color} radius={round ? "999px" : "7px"}>{children}</Button>
 )
 
 export default LPButton
