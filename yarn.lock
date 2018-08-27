@@ -4715,6 +4715,10 @@ polished@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/polished/-/polished-2.0.2.tgz#968aa98a86a51d611ccbfe23d3593afea7184b90"
 
+popper.js@^1.11.1:
+  version "1.14.4"
+  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.4.tgz#8eec1d8ff02a5a3a152dd43414a15c7b79fd69b6"
+
 portfinder@^1.0.9:
   version "1.0.17"
   resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.17.tgz#a8a1691143e46c4735edefcf4fbcccedad26456a"
@@ -5180,6 +5184,12 @@ react-dom@^16.4.2:
 react-is@^16.3.1:
   version "16.4.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.2.tgz#84891b56c2b6d9efdee577cc83501dfc5ecead88"
+
+react-tippy@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/react-tippy/-/react-tippy-1.2.2.tgz#061467d34d29e7a5a9421822d125c451d6bb5153"
+  dependencies:
+    popper.js "^1.11.1"
 
 react@^16.4.2:
   version "16.4.2"

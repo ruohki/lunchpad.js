@@ -18,6 +18,7 @@
     "polished": "^2.0.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "react-tippy": "^1.2.2",
     "source-map-support": "^0.5.9",
     "styled-components": "^3.4.5"
   },

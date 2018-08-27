@@ -9,7 +9,9 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let mainWindow
 
 function createMainWindow() {
-  const window = new BrowserWindow()
+  const window = new BrowserWindow({
+    title: "Lunchpad"
+  })
 
   if (isDevelopment) {
     window.webContents.openDevTools()
