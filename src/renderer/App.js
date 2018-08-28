@@ -20,6 +20,7 @@ const createDefaultConfig = () => {
     output: 1
   });
 }
+
 const VR = styled.div`
   height: 100%;
   width: 50%;
@@ -91,8 +92,14 @@ class App extends Component {
       }))
     });
 
-    this.midiInput.openPort(0);
-    this.midiOutput.openPort(0);
+    const { input, output } = settings.get('devices');
+    
+    try {
+      this.midiInput.openPort(input);
+      this.midiOutput.openPort(output);
+    } catch (ex) {
+      console.error("Error setting up MIDI devices.")
+    }
 
     this.clearLaunchpad();
   }
@@ -104,7 +111,6 @@ class App extends Component {
   }
 
   clearLaunchpad() {
-    console.log(this.midiOutput)
     _.range(11, 89).map(i => this.midiOutput.sendMessage([144, i, 0]))
   }
 
