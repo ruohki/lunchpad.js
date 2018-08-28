@@ -53,6 +53,8 @@ injectGlobal`
 
     overflow: hidden;
     user-select: none;
+
+    box-sizing: border-box;
   }
 
   body {

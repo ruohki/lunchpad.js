@@ -5,7 +5,7 @@ import settings from 'electron-settings';
 
 import { Main, Split, Child } from './components/layout';
 import LPButton from './components/LPButton';
-
+import styled from 'styled-components'
 import { Launchpad as MK2 } from './controller/LaunchpadMK2';
 
 const { Provider } = React.createContext({
@@ -20,6 +20,11 @@ const createDefaultConfig = () => {
     output: 1
   });
 }
+const VR = styled.div`
+  height: 100%;
+  width: 50%;
+  border-right: 2px solid rgba(0,0,0,0.25);
+`
 
 class App extends Component {
   constructor(props) {
@@ -34,6 +39,7 @@ class App extends Component {
     
     this.state = {
       buttons,
+      selectedKey: 0,
       btn: new Map()
     }
 
@@ -86,7 +92,7 @@ class App extends Component {
     });
 
     this.midiInput.openPort(0);
-    this.midiOutput.openPort(1);
+    this.midiOutput.openPort(0);
 
     this.clearLaunchpad();
   }
@@ -111,16 +117,33 @@ class App extends Component {
     console.log(`Side Button: ${key}, pressed: ${pressed}`)
   }
 
+  selectKey(key) {
+    const { selectedKey } = this.state;
+    this.setState({ selectedKey: selectedKey === key ? 0 : key });
+  }
+
   render() {
     return (
-      <Provider midiOutput={this.midiOutput} midiInput={this.midiInput}>
-        <Main>
-          <MK2 btn={this.state.btn} buttons={this.state.buttons} />
-        </Main>
-      </Provider>
+      <Main>
+        <div style={{ padding: "1rem", width: "100%", height: "100%"}}>
+
+        <Split>
+          <Child fill>
+            <MK2 selected={this.state.selectedKey} btn={this.state.btn} buttons={this.state.buttons} onKeyPressed={(e, selectedKey) => this.selectKey(selectedKey)} />
+          </Child>
+          {this.state.selectedKey !== 0 && 
+            <React.Fragment>
+              <Child padding={"1rem 3rem 1rem 3rem"}><VR/></Child>
+              <Child fill></Child>
+            </React.Fragment>
+          }
+        </Split>
+        </div>
+      </Main>
     )
   }
 }
+
 
 export default App;
 

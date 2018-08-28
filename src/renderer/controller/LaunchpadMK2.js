@@ -40,7 +40,7 @@ const AspectBoxOuter = styled.div`
   padding-top: 100%;
   position: relative;
   
-  
+  cursor: pointer;
 `
 
 const AspectBoxInner = styled.div`
@@ -49,8 +49,8 @@ background-size: cover;
 background-image: url(${buttonMask});
 
 border-radius: ${({round}) => round ? "999" : "7"}px;
-  border: 0.3rem solid rgba(0,0,0,.25);
-  border-bottom: .8rem solid rgba(0,0,0,.25);
+  border: 0.3rem solid ${({ selected }) => selected ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,.25)"};
+  border-bottom: .8rem solid ${({ selected }) => selected ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,.25)"};
   border-radius: ${({round}) => round ? "999" : "7"}px;
   background-color: ${({ color }) => color};
   position: absolute;
@@ -79,10 +79,10 @@ const AspectBoxContainer = styled.div`
   transform: translate(-50%, -50%);
 `
 
-const Button = ({ caption, round, color }) => {
+const Button = ({ caption, round, color, selected, onClick }) => {
   const Button = (
-    <AspectBoxOuter round={round} >
-      <AspectBoxInner round={round} color={color}>
+    <AspectBoxOuter round={round} onClick={onClick} >
+      <AspectBoxInner round={round} color={color} selected={selected}>
         <AspectBoxContainer>
           {caption}
         </AspectBoxContainer>
@@ -105,7 +105,7 @@ const Button = ({ caption, round, color }) => {
   ) : Button
 }
 
-export const Launchpad = ({ buttons = {}, btn = new Map()}) => (
+export const Launchpad = ({ buttons = {}, btn = new Map(), selected, onKeyPressed = () => true }) => (
   <PadContainerOuter>
     <PadContainerInner>
       {/* TopBar */}
@@ -118,7 +118,9 @@ export const Launchpad = ({ buttons = {}, btn = new Map()}) => (
               <Button
                 round
                 color={btnConfig.pressed ? 'red' : 'gray'}
+                selected={104 + i === selected}
                 caption={i}
+                onClick={(e) => onKeyPressed(e, 104 + i)}
               />
             </PadCol>
           )
@@ -136,14 +138,18 @@ export const Launchpad = ({ buttons = {}, btn = new Map()}) => (
               <PadCol key={`col-${y}-${x}`}>
                 {x === 8 ? <Button
                               round
+                              selected={LPIndex === selected}
                               color={btnConfig.pressed ? 'red' : 'gray'}
                               key={`side-${y}`}
                               caption={y}
+                              onClick={(e) => onKeyPressed(e, LPIndex)}
                             />
                          : <Button
                               color={btnConfig.pressed ? 'red' : 'gray'}
+                              selected={LPIndex === selected}
                               key={`btn-${x}`}
                               caption={LPIndex}
+                              onClick={(e) => onKeyPressed(e, LPIndex)}
                            />
                 }
               </PadCol>
