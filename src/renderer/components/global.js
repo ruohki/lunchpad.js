@@ -1,47 +1,11 @@
 import React from 'react';
 
 import { injectGlobal } from 'styled-components';
-import { fontFace } from 'polished';
+import { darken, lighten } from 'polished';
 
 import { COLOR_DARKER, COLOR_WHITE } from './constants';
 
 injectGlobal`
-  ${fontFace({
-    fontFamily: 'Proxima Nova',
-    fontFilePath: '/fonts/proxima-regular',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    fileFormats: ['ttf'],
-  })}
-  ${fontFace({
-    fontFamily: 'Proxima Nova',
-    fontFilePath: '/fonts/proxima-regularit',
-    fontWeight: 'normal',
-    fontStyle: 'italic',
-    fileFormats: ['ttf'],
-  })}
-  ${fontFace({
-    fontFamily: 'Proxima Nova',
-    fontFilePath: '/fonts/proxima-bold',
-    fontWeight: 'bold',
-    fontStyle: 'normal',
-    fileFormats: ['ttf'],
-  })}
-  ${fontFace({
-    fontFamily: 'Proxima Nova',
-    fontFilePath: '/fonts/proxima-boldit',
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    fileFormats: ['ttf'],
-  })}
-  ${fontFace({
-    fontFamily: 'Proxima Nova',
-    fontFilePath: '/fonts/proxima-light',
-    fontWeight: '200',
-    fontStyle: 'normal',
-    fileFormats: ['ttf'],
-  })}
-
   html {
     font-size: 62.5%;
     //font-size: calc(16px + (20 - 16) * (100vw - 320px) / (1280 - 320));
@@ -58,7 +22,7 @@ injectGlobal`
   }
 
   body {
-    font-family: Proxima Nova;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
     
     font-size: 1.6rem;
     font-weight: normal;
@@ -66,5 +30,12 @@ injectGlobal`
 
     color: ${COLOR_WHITE};
     background-color: ${COLOR_DARKER};
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 100;
+    text-transform: uppercase;
+    text-shadow: 2px 2px #000000;
+    margin-bottom: 1rem;
   }
 `;

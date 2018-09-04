@@ -3,10 +3,14 @@ import _ from 'lodash';
 import midi from 'midi';
 import settings from 'electron-settings';
 
+import './components/global.js';
+
 import { Main, Split, Child } from './components/layout';
 import LPButton from './components/LPButton';
 import styled from 'styled-components'
 import { Launchpad as MK2 } from './controller/LaunchpadMK2';
+import LPButtonConfig from './components/LPBButtonConfig';
+import Preferences from './components/settings';
 
 const { Provider } = React.createContext({
   setKeyColor(key, color) {
@@ -17,7 +21,7 @@ const { Provider } = React.createContext({
 const createDefaultConfig = () => {
   settings.set('devices', {
     input: 0,
-    output: 1
+    output: 0
   });
 }
 
@@ -40,8 +44,9 @@ class App extends Component {
     
     this.state = {
       buttons,
+      btn: new Map(),
       selectedKey: 0,
-      btn: new Map()
+      selectedColor: 3,
     }
 
 
@@ -56,9 +61,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    let buttons = {}
-
-    console.log(this.state)
     this.midiInput = new midi.input();
     this.midiOutput = new midi.output();
 
@@ -95,13 +97,13 @@ class App extends Component {
     const { input, output } = settings.get('devices');
     
     try {
-      this.midiInput.openPort(input);
-      this.midiOutput.openPort(output);
+      //this.midiInput.openPort(input);
+      //this.midiOutput.openPort(output);
     } catch (ex) {
       console.error("Error setting up MIDI devices.")
     }
 
-    this.clearLaunchpad();
+    //this.clearLaunchpad();
   }
 
   launchpadKeyEvent(key, pressed) {
@@ -135,7 +137,9 @@ class App extends Component {
 
         <Split>
           <Child fill>
-            <MK2 selected={this.state.selectedKey} btn={this.state.btn} buttons={this.state.buttons} onKeyPressed={(e, selectedKey) => this.selectKey(selectedKey)} />
+            <Preferences />
+            
+            
           </Child>
           {this.state.selectedKey !== 0 && 
             <React.Fragment>
@@ -150,6 +154,7 @@ class App extends Component {
   }
 }
 
+//<MK2 selected={this.state.selectedKey} btn={this.state.btn} buttons={this.state.buttons} onKeyPressed={(e, selectedKey) => this.selectKey(selectedKey)} />
 
 export default App;
 

@@ -21,6 +21,7 @@ export const Outer = styled(Color)`
   width: ${({ width }) => (width || 'initial')};
   height: ${({ height }) => (height || 'initial')};
 
+  border: ${({ border }) => border || "none"};
   border-radius: ${({ radius }) => (radius || 'initial')};
 
   overflow:   ${({ overflow }) => (overflow || 'initial')};
@@ -58,7 +59,7 @@ export const Child = styled(Outer)`
   flex-grow: ${({ fill }) => (fill ? '1' : '0')};
   align-self: ${({ self }) => (self || 'stretch')};
   flex-basis: ${({ basis }) => (basis || 'content')};
-
+  
   white-space: nowrap;
   text-overflow: ${({ truncate }) => (truncate ? 'ellipsis' : 'clip')};
 
@@ -70,7 +71,7 @@ export const Child = styled(Outer)`
     background-color: transparent;
   }
 
-${({ responsive }) => responsive ? `
+  ${({ responsive }) => responsive ? `
     @media only screen and (max-width: 1200px) {
       flex-basis: 100%;
 
@@ -108,8 +109,9 @@ export const Split = styled(Outer)`
   flex-direction: ${({ direction }) => (direction || 'row')};
   align-items: ${({ items }) => (items || 'stretch')};
   align-content: ${({ content }) => (content || 'flex-start')};
+  flex-wrap: ${({ wrap }) => wrap || "nowrap"}
 
-${({ responsive }) => responsive ? `
+  ${({ responsive }) => responsive ? `
     @media only screen and (max-width: 1200px) {
       flex-wrap: wrap;
       align-content: stretch;
@@ -156,3 +158,36 @@ export const Text = styled.span`
 export const List = ({ children, alternative }) => (
   React.Children.count(children) <= 0 ? alternative : children
 );
+
+
+const AspectBoxOuter = styled.div`
+  width: 100%;
+  padding-top: 100%;
+  position: relative;
+`
+
+const AspectBoxInner = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+`
+
+const AspectBoxContainer = styled.div`
+  padding: ${({ padding }) => padding || "0px"};
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`
+
+export const AspectBox = ({ children, padding}) => (
+  <AspectBoxOuter>
+    <AspectBoxInner>
+      <AspectBoxContainer padding={padding}>
+        {children}
+      </AspectBoxContainer>
+    </AspectBoxInner>
+  </AspectBoxOuter>
+)
