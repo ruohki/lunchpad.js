@@ -20,7 +20,11 @@ const ColorButton = styled.button`
 
 const LPColorPicker = ({ selectedColor, onSelectColor }) => (
   <Split items="flex-start" wrap="wrap">
-    {LPColors.map((e,i) => (
+    {LPColors.map((e,i) => i === 0 ? (
+      <Child key={`color-${i}`}>
+        <ColorButton color={'gray'} highlight={i === selectedColor} onClick={(e) => onSelectColor(i, e)}>X</ColorButton>
+      </Child>
+    ) : (
       <Child key={`color-${i}`}>
         <ColorButton color={e} highlight={i === selectedColor} onClick={(e) => onSelectColor(i, e)} />
       </Child>

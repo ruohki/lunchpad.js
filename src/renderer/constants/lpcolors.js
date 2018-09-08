@@ -1,5 +1,5 @@
 export const LPColors = [
-    "#000000",
+    "#7c7c7c",
     "#1c1c1c",
     "#7c7c7c",
     "#fcfcfc",

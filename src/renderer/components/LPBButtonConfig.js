@@ -11,6 +11,7 @@ class LPButtonConfig extends Component {
     super(props);
 
     const {
+      selectedKey = 0,
       description = "",
       selectedFile = "",
       selectedColor = 0,
@@ -25,9 +26,10 @@ class LPButtonConfig extends Component {
   }
 
   onAccept() {
-    const { onAccept = () => true} = this.props;
+    const { selectedKey, onAccept = () => true} = this.props;
 
     const result = {
+      selectedKey,
       color: this.state.selectedColor,
       description: this.state.description,
       file: this.state.selectedFile
@@ -40,6 +42,7 @@ class LPButtonConfig extends Component {
     const {onCancel = () => true } = this.props;
     onCancel();
   }
+
   render() {
     
 
@@ -81,10 +84,10 @@ class LPButtonConfig extends Component {
         <Child>
           <Split justify="flex-end">
             <Child padding="0 1rem 0 0">
-              <Button color={COLOR_REDISH} onAccept={this.onCancel.bind(this)}>Cancel</Button>
+              <Button color={COLOR_REDISH} onClick={this.onCancel.bind(this)}>Cancel</Button>
             </Child>
             <Child>
-              <Button onAccept={this.onAccept.bind(this)}>Accept</Button>
+              <Button onClick={this.onAccept.bind(this)}>Accept</Button>
             </Child>
           </Split>
         </Child>

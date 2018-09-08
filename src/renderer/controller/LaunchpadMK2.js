@@ -6,7 +6,8 @@ import buttonMask from '../../static/buttonmask.png';
 
 import 'react-tippy/dist/tippy.css'
 import { Tooltip, withTooltip } from 'react-tippy';
-
+import { LPColors } from '../constants/lpcolors';
+import { Text } from '../components/layout';
 const PadContainerOuter = styled.div`
   width: 100%;
   padding-top: 100%;
@@ -84,7 +85,7 @@ const Button = ({ caption, round, color, selected, onClick }) => {
     <AspectBoxOuter round={round} onClick={onClick} >
       <AspectBoxInner round={round} color={color} selected={selected}>
         <AspectBoxContainer>
-          {caption}
+          <Text>{caption}</Text>
         </AspectBoxContainer>
       </AspectBoxInner>
     </AspectBoxOuter>
@@ -111,15 +112,15 @@ export const Launchpad = ({ buttons = {}, btn = new Map(), selected, onKeyPresse
       {/* TopBar */}
       <PadRow>
         {_.range(0,8).map(i => {
-          const btnConfig = btn.get(104 + i) || { color: 0, pressed: false}
+          const btnConfig = btn.get(104 + i) || { color: 0, pressed: false, file: "", description: ""}
 
           return (
             <PadCol key={`top-${i}`}>
               <Button
                 round
-                color={btnConfig.pressed ? 'red' : 'gray'}
+                color={LPColors[btnConfig.color]}
                 selected={104 + i === selected}
-                caption={i}
+                caption={btnConfig.description}
                 onClick={(e) => onKeyPressed(e, 104 + i)}
               />
             </PadCol>
@@ -127,28 +128,28 @@ export const Launchpad = ({ buttons = {}, btn = new Map(), selected, onKeyPresse
         }
         )}
         <PadCol />
-      </PadRow>
+      </PadRow>{console.log("rerendering")}
       {_.range(0, 8).map(y => 
         <PadRow key={`row-${y}`}>
           {_.range(0,9).map(x => {
             const buttonIndex = y * 8 + x;
             const LPIndex = 81 - (y * 10) + x
-            const btnConfig = btn.get(LPIndex) || { color: 0, pressed: false}
+            const btnConfig = btn.get(LPIndex) || { color: 0, pressed: false, file: "", description: ""}
             return (
               <PadCol key={`col-${y}-${x}`}>
                 {x === 8 ? <Button
                               round
                               selected={LPIndex === selected}
-                              color={btnConfig.pressed ? 'red' : 'gray'}
+                              color={LPColors[btnConfig.color]}
                               key={`side-${y}`}
-                              caption={y}
+                              caption={btnConfig.description}
                               onClick={(e) => onKeyPressed(e, LPIndex)}
                             />
                          : <Button
-                              color={btnConfig.pressed ? 'red' : 'gray'}
+                              color={LPColors[btnConfig.color]}
                               selected={LPIndex === selected}
                               key={`btn-${x}`}
-                              caption={LPIndex}
+                              caption={btnConfig.description}
                               onClick={(e) => onKeyPressed(e, LPIndex)}
                            />
                 }

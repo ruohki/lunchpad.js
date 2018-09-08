@@ -3,6 +3,8 @@ import _ from 'lodash';
 import midi from 'midi';
 import settings from 'electron-settings';
 
+import { getInputs, getOutputs } from './helper';
+
 import './components/global.js';
 
 import { Main, Split, Child } from './components/layout';
@@ -38,7 +40,7 @@ class App extends Component {
     let buttons = {}
     _.range(0, 8).map(y =>
       _.range(0, 8).map(x =>
-        buttons[81 - (y * 10) + x] = { color: 0, pressed: false }
+        buttons[81 - (y * 10) + x] = { color: 0, pressed: false, file: "", description: "" }
       )
     )
     
@@ -47,11 +49,13 @@ class App extends Component {
       btn: new Map(),
       selectedKey: 0,
       selectedColor: 3,
+      showPreferences: false
     }
 
 
     if (!settings.has('devices')) {
       createDefaultConfig();
+      this.state.showPreferences = true;
     } else {
       this.state.config = {
         devices: settings.get('devices')
@@ -60,7 +64,7 @@ class App extends Component {
 
   }
 
-  componentDidMount() {
+  initializeMidi() {
     this.midiInput = new midi.input();
     this.midiOutput = new midi.output();
 
@@ -94,26 +98,58 @@ class App extends Component {
       }))
     });
 
-    const { input, output } = settings.get('devices');
+    let { input, output, inputName, outputName } = settings.get('devices');
     
     try {
-      //this.midiInput.openPort(input);
-      //this.midiOutput.openPort(output);
+      // Name & DeviceID Check
+      const inputs = getInputs();
+      const outputs = getOutputs();
+      if (inputs[input] !== inputName) {
+        input = inputs.indexOf(inputName);
+      }
+      
+      if (input !== -1) {
+        this.midiInput.openPort(input);
+        settings.set('devices.input', input)
+      }
+      
+      if (outputs[output] !== outputName) {
+        output = outputs.indexOf(outputName)
+        settings.set('devices.output', output)
+      }
+
+      if (output !== -1) {
+        this.midiOutput.openPort(output);
+        settings.set('devices.output', output)
+      }
     } catch (ex) {
       console.error("Error setting up MIDI devices.")
     }
+  }
 
-    //this.clearLaunchpad();
+  componentDidMount() {
+    this.initializeMidi();
+    this.clearLaunchpad();
   }
 
   launchpadKeyEvent(key, pressed) {
-    
+    const { btn } = this.state;
+    const buttonConfig = btn.get(key) || { color: 0}
 
+    this.midiOutput.sendMessage([144, key, pressed ? 123 : buttonConfig.color])
     console.log(`Main Button: ${key}, pressed: ${pressed}`)
   }
 
   clearLaunchpad() {
     _.range(11, 89).map(i => this.midiOutput.sendMessage([144, i, 0]))
+  }
+
+  buildLights() {
+    const { btn } = this.state;
+    _.range(11, 89).map(i => {
+      const buttonConfig = btn.get(i) || { color: 0}
+      this.midiOutput.sendMessage([144, i, buttonConfig.color])
+    })
   }
 
   launchpadTopKeyEvent(key, pressed) {
@@ -130,31 +166,58 @@ class App extends Component {
     this.setState({ selectedKey: selectedKey === key ? 0 : key });
   }
 
+  acceptButtonConfig(e) {
+    const { description, file, color, selectedKey } = e;
+    const { btn } = this.state;
+    let buttonConfig = btn.get(e.selectedKey) || { pressed: false, description, color, file}
+
+    btn.set(selectedKey, buttonConfig);
+    this.setState({ btn, selectedKey: 0 })
+    this.buildLights()
+  }
   render() {
+    const { btn, selectedKey } = this.state;
+    const buttonConfig = btn.get(selectedKey) || { pressed: false, color: 0, file: "", description: ""};
+    
     return (
       <Main>
         <div style={{ padding: "1rem", width: "100%", height: "100%"}}>
+          <Split>
+            {this.state.selectedKey !== 0 ? (
+              <Child>
+                <LPButtonConfig
+                  selectedKey={this.state.selectedKey}
+                  selectedColor={buttonConfig.color}
+                  description={buttonConfig.description}
+                  selectedFile={buttonConfig.file}
 
-        <Split>
-          <Child fill>
-            <Preferences />
-            
-            
-          </Child>
-          {this.state.selectedKey !== 0 && 
-            <React.Fragment>
-              <Child padding={"1rem 3rem 1rem 3rem"}><VR/></Child>
-              <Child fill></Child>
-            </React.Fragment>
-          }
-        </Split>
+                  onCancel={() => this.setState({ selectedKey: 0 })}
+                  onAccept={this.acceptButtonConfig.bind(this)}
+                />
+              </Child>
+            ) : (
+              <Child fill>
+                {this.state.showPreferences ? (
+                  <Preferences
+                    onCancel={() => this.setState({ showPreferences: false}) }
+                    onAccpet={() => {
+                      this.setState({ showPreferences: false })
+                      this.initializeMidi();
+                    }}
+                  />
+                ) : (
+                  <MK2 selected={this.state.selectedKey} btn={this.state.btn} buttons={this.state.buttons} onKeyPressed={(e, selectedKey) => this.selectKey(selectedKey)} />
+                )}
+              </Child>
+            )}
+          </Split>
         </div>
       </Main>
     )
   }
 }
 
-//<MK2 selected={this.state.selectedKey} btn={this.state.btn} buttons={this.state.buttons} onKeyPressed={(e, selectedKey) => this.selectKey(selectedKey)} />
+//
 
 export default App;
 
